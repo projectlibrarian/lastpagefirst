@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intentional Outcomes: Last Page First | NYLA 2026 Pre-Conference</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; width: 100%; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .deck { flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden; }
+
+  .slide {
+    display: none;
+    padding: 5vh 7vw;
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    flex-direction: column;
+    justify-content: safe center;
+    background: #fff;
+  }
+  .slide.active { display: flex; }
+
+  .tap-prev, .tap-next { position: absolute; top: 0; width: 18%; height: 100%; z-index: 10; cursor: pointer; opacity: 0; }
+  .tap-prev { left: 0; }
+  .tap-next { right: 0; }
+
+  /* ---------- Shared type ---------- */
+  .eyebrow {
+    font-size: clamp(0.8rem, 1.3vw, 1.2rem);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #e94560;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .slide h2 {
+    font-size: clamp(1.8rem, 4.2vw, 3.6rem);
+    color: #1a1a2e;
+    line-height: 1.15;
+    font-weight: 700;
+    margin-bottom: 22px;
+  }
+  .lede {
+    font-size: clamp(1.15rem, 2.3vw, 2rem);
+    color: #555;
+    font-weight: 300;
+    line-height: 1.6;
+    margin-bottom: 18px;
+    max-width: 92%;
+  }
+  .slide ul.big, .slide ol.big { padding-left: 1.2em; }
+  .slide ul.big li, .slide ol.big li {
+    font-size: clamp(1.15rem, 2.3vw, 2rem);
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 0.45em;
+    font-weight: 400;
+  }
+  .slide ul.big li strong, .slide ol.big li strong { color: #0f3460; font-weight: 700; }
+  .slide ul.big li ul { margin-top: 0.3em; padding-left: 1.1em; }
+  .slide ul.big li ul li { font-size: 0.85em; color: #555; margin-bottom: 0.25em; }
+  .slide ul.compact li { font-size: clamp(1rem, 1.9vw, 1.6rem); margin-bottom: 0.3em; }
+  .slide ul.tight li { font-size: clamp(0.95rem, 1.7vw, 1.45rem); margin-bottom: 0.22em; }
+
+  .callout {
+    margin-top: 18px;
+    padding: 16px 24px;
+    background: #f4f6fb;
+    border-left: 5px solid #0f3460;
+    border-radius: 0 8px 8px 0;
+    font-size: clamp(1.05rem, 2vw, 1.7rem);
+    color: #1a1a2e;
+    line-height: 1.55;
+  }
+  .callout.pink { background: #fff1f3; border-left-color: #e94560; }
+  .callout.green { background: #f0faf4; border-left-color: #2ecc71; color: #1a5c35; }
+  .callout strong { color: inherit; }
+  .callout .tag {
+    display: block;
+    font-size: clamp(0.7rem, 1.1vw, 1rem);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #e94560;
+  }
+  .callout.green .tag { color: #2ecc71; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2vw; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.8vw; }
+  .card {
+    background: #f4f6fb;
+    border-radius: 12px;
+    padding: 20px 24px;
+    border-top: 5px solid #0f3460;
+  }
+  .card.pink { border-top-color: #e94560; background: #fff1f3; }
+  .card.green { border-top-color: #2ecc71; background: #f0faf4; }
+  .card h3 {
+    font-size: clamp(1.15rem, 2.1vw, 1.8rem);
+    color: #1a1a2e;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .card p, .card li {
+    font-size: clamp(1rem, 1.8vw, 1.5rem);
+    color: #444;
+    line-height: 1.5;
+  }
+  .card ul { padding-left: 1.1em; }
+  .card li { margin-bottom: 0.25em; }
+  .card .big-num { font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 700; color: #0f3460; line-height: 1; margin-bottom: 6px; }
+
+  /* Tables */
+  table.t { border-collapse: collapse; width: 100%; margin-top: 6px; }
+  table.t th, table.t td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.55em 0.8em;
+    border-bottom: 1px solid #dde1ec;
+    font-size: clamp(0.95rem, 1.7vw, 1.4rem);
+    line-height: 1.4;
+    color: #333;
+  }
+  table.t th {
+    background: #0f3460;
+    color: #fff;
+    font-weight: 600;
+    font-size: clamp(0.85rem, 1.4vw, 1.2rem);
+    letter-spacing: 0.04em;
+  }
+  table.t td:first-child { font-weight: 700; color: #0f3460; }
+  table.t.small th, table.t.small td { font-size: clamp(0.85rem, 1.45vw, 1.2rem); padding: 0.4em 0.65em; }
+
+  /* ---------- Title ---------- */
+  .slide-title {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    color: #fff;
+    align-items: flex-start;
+  }
+  .slide-title .kicker {
+    font-size: clamp(0.9rem, 1.5vw, 1.4rem);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #e94560;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  .slide-title h1 { font-size: clamp(2.4rem, 7.5vw, 6.5rem); font-weight: 700; line-height: 1.08; margin-bottom: 14px; }
+  .slide-title h1 em { color: #e94560; font-style: normal; }
+  .slide-title .subtitle-main { font-size: clamp(1.2rem, 3vw, 2.6rem); color: rgba(255,255,255,0.8); font-weight: 300; margin-bottom: 20px; }
+  .slide-title .subtitle { font-size: clamp(1rem, 1.9vw, 1.6rem); color: rgba(255,255,255,0.55); font-weight: 300; max-width: 75%; line-height: 1.7; }
+
+  /* ---------- Intro ---------- */
+  .slide-intro .intro-name { font-size: clamp(2.4rem, 6vw, 5.5rem); font-weight: 700; color: #1a1a2e; line-height: 1.1; margin-bottom: 16px; }
+  .intro-accent { width: 50px; height: 4px; background: #e94560; border-radius: 2px; margin-bottom: 20px; }
+  .intro-role { font-size: clamp(1.1rem, 2.2vw, 2rem); color: #0f3460; font-weight: 600; margin-bottom: 24px; }
+  .intro-body { font-size: clamp(1.05rem, 2vw, 1.7rem); color: #555; font-weight: 300; line-height: 1.75; max-width: 80%; }
+
+  /* ---------- Section ---------- */
+  .slide-section {
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+    color: #fff;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .slide-section .s-num { font-size: clamp(3rem, 11vw, 10rem); font-weight: 700; color: rgba(255,255,255,0.14); line-height: 1; margin-bottom: 4px; }
+  .slide-section .s-eyebrow { font-size: clamp(0.8rem, 1.3vw, 1.2rem); letter-spacing: 0.2em; text-transform: uppercase; color: #2ecc71; font-weight: 600; margin-bottom: 18px; }
+  .slide-section h2 { color: #fff; font-size: clamp(2.2rem, 5.5vw, 4.6rem); margin-bottom: 20px; }
+  .slide-section .s-body { font-size: clamp(1.1rem, 2vw, 1.8rem); color: rgba(255,255,255,0.7); font-weight: 300; line-height: 1.6; max-width: 80%; }
+  .slide-section .s-meta { margin-top: 26px; font-size: clamp(0.9rem, 1.4vw, 1.2rem); color: rgba(255,255,255,0.45); letter-spacing: 0.08em; }
+  .slide-section .s-step {
+    display: inline-block; margin-top: 18px; padding: 6px 16px;
+    border: 2px solid #e94560; border-radius: 30px; color: #e94560;
+    font-size: clamp(0.85rem, 1.3vw, 1.15rem); font-weight: 600; letter-spacing: 0.06em;
+  }
+
+  /* ---------- Exercise ---------- */
+  .slide-exercise { background: #fff; }
+  .slide-exercise .ex-head { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 8px; }
+  .pill {
+    display: inline-block; padding: 6px 18px; border-radius: 30px;
+    background: #e94560; color: #fff; font-weight: 700;
+    font-size: clamp(0.95rem, 1.6vw, 1.4rem); letter-spacing: 0.05em;
+  }
+  .pill.blue { background: #0f3460; }
+  .ex-box {
+    margin-top: 6px; padding: 22px 30px;
+    background: #1a1a2e; color: #fff; border-radius: 14px;
+  }
+  .ex-box ol, .ex-box ul { padding-left: 1.3em; }
+  .ex-box li { font-size: clamp(1.15rem, 2.3vw, 2rem); line-height: 1.5; margin-bottom: 0.4em; color: #fff; }
+  .ex-box li strong { color: #ffb3c0; }
+  .ex-box li em { color: #9fe3b5; font-style: normal; }
+  .ex-box p { font-size: clamp(1.15rem, 2.2vw, 1.9rem); line-height: 1.5; color: #fff; margin-bottom: 0.4em; }
+  .ex-box.compact li { font-size: clamp(1rem, 1.9vw, 1.6rem); }
+
+  /* ---------- Problems & fixes ---------- */
+  .pf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px; }
+  .pf-row > div { padding: 12px 18px; border-radius: 8px; font-size: clamp(0.95rem, 1.75vw, 1.45rem); line-height: 1.4; }
+  .pf-row .p { background: #fff1f3; border-left: 5px solid #e94560; color: #6b1c2a; }
+  .pf-row .f { background: #f0faf4; border-left: 5px solid #2ecc71; color: #1a5c35; }
+  .pf-head { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 8px; }
+  .pf-head span { font-size: clamp(0.75rem, 1.2vw, 1.05rem); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+  .pf-head span:first-child { color: #e94560; }
+  .pf-head span:last-child { color: #2ecc71; }
+
+  /* ---------- Quote / big statement ---------- */
+  .slide-big { background: #fff; }
+  .slide-big .bigq { font-size: clamp(2rem, 5.5vw, 4.6rem); font-weight: 700; color: #1a1a2e; line-height: 1.2; margin-bottom: 22px; }
+  .slide-big .bigq em { color: #e94560; font-style: normal; }
+  .slide-big .bigsub { font-size: clamp(1.15rem, 2.3vw, 2rem); color: #666; font-weight: 300; line-height: 1.6; max-width: 90%; }
+
+  /* ---------- Matrix ---------- */
+  .matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+  .matrix div { padding: 16px 20px; border-radius: 10px; font-size: clamp(1rem, 1.9vw, 1.6rem); line-height: 1.4; }
+  .matrix .go { background: #f0faf4; border: 2px solid #2ecc71; color: #1a5c35; }
+  .matrix .neg { background: #fffbea; border: 2px solid #f1c40f; color: #6b5800; }
+  .matrix .neg2 { background: #fffbea; border: 2px solid #f1c40f; color: #6b5800; }
+  .matrix .no { background: #fff1f3; border: 2px solid #e94560; color: #6b1c2a; }
+  .matrix strong { display: block; font-size: 1.1em; margin-bottom: 4px; }
+
+  /* ---------- Closing ---------- */
+  .slide-close {
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+    color: #fff; align-items: flex-start; justify-content: center;
+  }
+  .slide-close h2 { color: #fff; font-size: clamp(2rem, 5vw, 4.2rem); margin-bottom: 18px; }
+  .slide-close p { font-size: clamp(1.1rem, 2.1vw, 1.8rem); color: rgba(255,255,255,0.7); font-weight: 300; max-width: 800px; line-height: 1.7; margin-bottom: 28px; }
+  .slide-close a {
+    display: inline-block; padding: 16px 36px; background: #e94560; color: #fff;
+    border-radius: 6px; text-decoration: none; font-size: clamp(1rem, 1.7vw, 1.5rem);
+    font-weight: 600; letter-spacing: 0.04em; margin: 0 14px 14px 0;
+  }
+  .slide-close a.alt { background: transparent; border: 2px solid rgba(255,255,255,0.5); }
+
+  /* Dense slides (take-home checklist) */
+  .slide.dense { padding: 3vh 5vw; }
+  .slide.dense h2 { font-size: clamp(1.4rem, 3vw, 2.5rem); margin-bottom: 10px; }
+  .slide.dense .card { padding: 12px 18px; }
+  .slide.dense .card h3 { font-size: clamp(1rem, 1.7vw, 1.45rem); margin-bottom: 4px; }
+  .slide.dense .card p, .slide.dense .card li { font-size: clamp(0.85rem, 1.4vw, 1.2rem); line-height: 1.35; }
+  .slide.dense .card li { margin-bottom: 0.1em; }
+  .slide.check { padding: 4vh 5vw; }
+  .slide.check h2 { font-size: clamp(1.5rem, 3.2vw, 2.6rem); margin-bottom: 16px; }
+  .slide.check .card { padding: 18px 22px; }
+  .slide.check .card h3 { font-size: clamp(1.1rem, 1.9vw, 1.6rem); margin-bottom: 12px; line-height: 1.3; }
+  .slide.check .card h3 em { font-weight: 400; color: #555; }
+  .slide.check .card li { font-size: clamp(0.95rem, 1.5vw, 1.3rem); line-height: 1.4; margin-bottom: 0.45em; }
+  .slide.check .card p { font-size: clamp(0.95rem, 1.5vw, 1.3rem); margin-top: 12px; }
+  /* Progress */
+  .counter-bar { display: flex; justify-content: flex-end; padding: 8px 20px 10px; background: #1a1a2e; }
+  .counter { font-size: 0.95rem; color: rgba(255,255,255,0.55); letter-spacing: 0.1em; }
+  .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.12); }
+  .progress-fill { height: 100%; background: #e94560; transition: width 0.3s ease; }
+
+  @media (max-width: 760px) {
+    .two-col, .three-col, .pf-row, .pf-head { grid-template-columns: 1fr; }
+    .pf-head { display: none; }
+    .slide { padding: 4vh 6vw; }
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 1. TITLE -->
+<div class="slide slide-title active">
+  <div class="kicker">NYLA 2026 Pre-Conference Workshop &middot; Saratoga Springs</div>
+  <h1>Intentional <em>Outcomes</em></h1>
+  <p class="subtitle-main">A Project Planning Session for Accidental Project Managers</p>
+  <p class="subtitle">Build a real plan for a real project, using one method you can repeat: <strong>Last Page First</strong>.</p>
+</div>
+
+<!-- 2. PRESENTER -->
+<div class="slide slide-intro">
+  <div class="eyebrow">Your Presenter</div>
+  <h2 class="intro-name">Ron Kirsop, PMP</h2>
+  <div class="intro-accent"></div>
+  <p class="intro-role">Executive Director, OWWL Library System</p>
+  <p class="intro-body">Librarian, Project Management Professional, and author of <em>Intentional Outcomes: A Project Management Guide for Nonprofits and Local Governments</em>. I help libraries across New York turn good ideas into finished projects, and I've seen most of the ways they come unstuck.</p>
+</div>
+
+<!-- 3. HOW TODAY WORKS -->
+<div class="slide">
+  <div class="eyebrow">How Today Works</div>
+  <h2>A working conversation, not a lecture.</h2>
+  <ul class="big">
+    <li><strong>You bring one real project</strong> (your <em>Anchor Project</em>). By the end, you'll have a plan for it on one folded sheet of paper.</li>
+    <li><strong>Mostly discussion.</strong> Short bursts of explanation, then you answer, argue, and decide out loud.</li>
+    <li><strong>Short quiet writing</strong>, plus one pair exercise.</li>
+    <li><strong>You already know some project management.</strong> This session is a tune-up for your methods and workflows.</li>
+    <li><strong>Everything on these slides is a resource.</strong> Feel free to use it.</li>
+  </ul>
+</div>
+
+<!-- 4. RUN OF SHOW -->
+<div class="slide">
+  <div class="eyebrow">Agenda</div>
+  <h2>Today at a glance</h2>
+  <table class="t small">
+    <tr><th>Segment</th><th>You will...</th></tr>
+    <tr><td>Opening</td><td>Swap project stories</td></tr>
+    <tr><td>1. Is It a Project?</td><td>Sort projects from operations; choose your Anchor Project</td></tr>
+    <tr><td>The Method Map</td><td>See <em>Last Page First</em> and fold your paper</td></tr>
+    <tr><td>2. Write the Last Page</td><td>Draft it, test it on a partner, size your project</td></tr>
+    <tr><td>3. Table of Contents</td><td>Break down the work; defend the scope</td></tr>
+    <tr><td>Break</td><td>Stretch your legs</td></tr>
+    <tr><td>4. Time and Money</td><td>Estimate with PERT; trade scope, schedule, and budget</td></tr>
+    <tr><td>5. People and Pre-Mortem</td><td>Map stakeholders; find how it fails first</td></tr>
+    <tr><td>6. Write in Chapters</td><td>Build a board; report status to "the board"</td></tr>
+    <tr><td>7. The Epilogue</td><td>Plan the close; write the announcement</td></tr>
+    <tr><td>Replicate It</td><td>Take the one-page checklist home</td></tr>
+  </table>
+</div>
+
+<!-- ===================== OPENING ===================== -->
+<div class="slide slide-section">
+  <div class="s-eyebrow">Opening</div>
+  <h2>Accidental Project Managers</h2>
+  <p class="s-body">"Somebody got a grant, the roof leaked, the board wanted a strategic plan, and it was your turn."</p>
+</div>
+
+<div class="slide slide-big">
+  <div class="eyebrow">The Formula</div>
+  <p class="bigq">Project Success = <em>(Clarity &times; Communication)</em> &divide; Chaos</p>
+  <p class="bigsub">When clarity or communication drops, chaos fills the space. Project management is structure applied to work you already do. <br><span style="font-size:0.7em;color:#999;">&mdash; <em>Intentional Outcomes</em>, Ch. 1</span></p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Project Confessions</div>
+  <h2>Introduce yourself, then confess...</h2>
+  <p class="lede">Share your name, your library, and your role. Then answer one of these questions briefly, or tell us about a project struggle of your own. (You'll pick your Anchor Project in a few minutes.)</p>
+  <ul class="big compact">
+    <li>Has anyone been handed a project with <strong>no end date</strong>?</li>
+    <li>Has a trustee or supervisor <strong>added something halfway through</strong>, and nobody adjusted the deadline?</li>
+    <li>Have you found out <strong>who the real decision-maker was</strong> after the work was done?</li>
+    <li>Do you have a project that's <strong>still "not quite done"</strong> months later?</li>
+    <li><strong>How many projects</strong> are you running on top of your regular job?</li>
+    <li>Who has had <strong>formal project management training</strong>? Who learned by doing?</li>
+  </ul>
+</div>
+
+<!-- ===================== SEGMENT 1 ===================== -->
+<div class="slide slide-section">
+  <div class="s-num">1</div>
+  <div class="s-eyebrow">Segment 1</div>
+  <h2>Is It a Project?</h2>
+  <p class="s-body">Separate projects from operations and from time management. Commit to one Anchor Project.</p>
+  <div class="s-step">METHOD STEP: SHELF CHECK</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Definitions</div>
+  <h2>Project, operation, or time management?</h2>
+  <div class="three-col">
+    <div class="card"><h3>Project</h3><p>A temporary effort that creates something new or better. Has a beginning and an end.</p><p style="margin-top:8px;"><strong>Migrating payroll systems</strong></p></div>
+    <div class="card"><h3>Operation</h3><p>Ongoing, repeating work that keeps the organization running.</p><p style="margin-top:8px;"><strong>Running payroll</strong></p></div>
+    <div class="card"><h3>Time management</h3><p>How <em>you</em> spend your hours. Project management is how a <em>piece of work</em> gets from idea to done, often through other people.</p></div>
+  </div>
+  <div class="callout pink"><span class="tag">Often misdiagnosed</span>A lot of what feels like a time management problem is really three unbounded projects pretending to be operations.</div>
+</div>
+
+<div class="slide slide-big">
+  <div class="eyebrow">The Quick Test</div>
+  <p class="bigq">Can we say <em>when</em> it will be finished?<br>Can we say what <em>success</em> looks like?</p>
+  <p class="bigsub">Two yeses means you manage it as a project. Anything else is an idea, a wish, or a problem. That's fine, but it goes on the <strong>Idea Log</strong>, not the calendar. <span style="color:#999;font-size:0.75em;">(<em>Intentional Outcomes</em>, Ch. 1)</span></p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Group Exercise</div>
+  <h2>Project or Operation?</h2>
+  <p class="lede">Call it: <strong>Project</strong>, <strong>Operation</strong>, or <strong>Not Yet a Project</strong> (fails the Quick Test). We'll argue about the hard ones.</p>
+  <div class="two-col">
+    <ul class="big tight">
+      <li>Weekly storytime</li>
+      <li>Launching a new storytime series for toddlers</li>
+      <li>Monthly board packet</li>
+      <li>Writing the 2027-2031 Long-Range Plan</li>
+      <li>Migrating to a new ILS</li>
+      <li>Daily holds pull list</li>
+    </ul>
+    <ul class="big tight">
+      <li>Genrefying the middle school fiction collection</li>
+      <li>Annual weeding</li>
+      <li>Applying for NYS Construction Aid for a roof</li>
+      <li>"Improve our social media"</li>
+      <li>Moving the academic library's LibGuides to a new platform</li>
+      <li>"Be more welcoming to teens"</li>
+    </ul>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">The Hard Part</div>
+  <h2>Projects create operations.</h2>
+  <ul class="big">
+    <li>The website <strong>redesign</strong> ends. The website doesn't. <strong>Who updates it, renews the hosting, and pays for it in year two?</strong></li>
+    <li>Annual weeding is an operation. A <strong>one-time weeding to prepare for a move</strong> is a project.</li>
+    
+  </ul>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">SOLO</span><div class="eyebrow" style="margin:0;">Exercise</div></div>
+  <h2>Choose your Anchor Project</h2>
+  <div class="ex-box">
+    <ol>
+      <li>Pick <strong>one project</strong> you're responsible for (or will be soon).</li>
+      <li>Run the <strong>Quick Test</strong> on it. If it fails, tighten it or pick another.</li>
+      <li>At the top of your paper write the <strong>project name</strong>: verb + object. <em>"Launch..." "Replace..." "Migrate..."</em></li>
+      <li>Under it, one line each: <strong>It's done when...</strong> / <strong>It's a success if...</strong></li>
+    </ol>
+    <p>No project? Adopt a practice project (next slide).</p>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Practice Projects</div>
+  <h2>No real project? Adopt one of these.</h2>
+  <div class="two-col">
+    <div class="card"><h3>1 &middot; Public</h3><p>Replace the circulation desk and add two self-checkout stations, funded by a $15,000 grant, by next June.</p></div>
+    <div class="card"><h3>2 &middot; Academic</h3><p>Migrate 300 research guides to a new platform before the fall semester.</p></div>
+    <div class="card"><h3>3 &middot; School</h3><p>Genrefy the middle school fiction collection over the summer with one librarian and two volunteers.</p></div>
+    <div class="card"><h3>4 &middot; System / multi-library</h3><p>Coordinate a shared summer reading kickoff across 10 member libraries.</p></div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Segment 1 &middot; Problems and Fixes</div>
+  <h2>Where it goes wrong at the start</h2>
+  <div class="pf-head"><span>Problem</span><span>Fix</span></div>
+  <div class="pf-row"><div class="p"><strong>The zombie project.</strong> Started years ago; nobody can say what done is.</div><div class="f">Run the Quick Test today. If it fails, write the Last Page this week, or end it on purpose.</div></div>
+  <div class="pf-row"><div class="p"><strong>Shared ownership.</strong> "The committee owns it."</div><div class="f">One named PM and one named sponsor, in writing.</div></div>
+  <div class="pf-row"><div class="p"><strong>Deadline before scope.</strong> A date was announced, and now you work out what fits.</div><div class="f">Treat the date as a constraint on scope, and get the sponsor to agree on what "done by then" means.</div></div>
+  <div class="pf-row"><div class="p"><strong>Inherited verbal promises</strong> from your predecessor.</div><div class="f">One hour with the sponsor. Write them down. Confirm or release each one.</div></div>
+</div>
+
+<!-- ===================== METHOD MAP ===================== -->
+<div class="slide slide-section">
+  <div class="s-eyebrow">The Method Map</div>
+  <h2>Last Page First</h2>
+  <p class="s-body">"The book is called <em>Intentional Outcomes</em> for a reason: you decide the ending before you start."</p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">The Method</div>
+  <h2>Five Steps</h2>
+  <table class="t small">
+    <tr><th>Step</th><th>Question</th><th>You walk away with</th><th>Gate: who has to say go?</th></tr>
+    <tr><td>0. Shelf Check</td><td>Is this a project?</td><td>A yes or no, and an edition</td><td>You</td></tr>
+    <tr><td>1. Last Page</td><td>What does the ending look like, and who can approve it?</td><td>Purpose, success, done, out of scope, authority</td><td>Sponsor approves the Last Page</td></tr>
+    <tr><td>2. Table of Contents</td><td>What are the chapters, and what will they cost in time and money?</td><td>Deliverables, estimates, milestones, risks, change rule</td><td>Sponsor agrees to the plan as the baseline</td></tr>
+    <tr><td>3. Chapters</td><td>How do we write it one stage at a time?</td><td>Board, weekly check, status reports, change log</td><td>Sponsor decides at chapter end: continue / adjust / stop</td></tr>
+    <tr><td>4. Epilogue</td><td>How do we finish on purpose?</td><td>Verified result, owner, records, lessons, thank-yous</td><td>Sponsor accepts in writing</td></tr>
+  </table>
+  <div class="callout"><span class="tag" style="color:#0f3460;">What's a gate?</span>A gate is a checkpoint between steps. Before you move on, the person named in the last column has to say "go." If they say no, you fix the work first, before spending more time or money.</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Why This Order?</div>
+  <h2>Every later decision gets easier when the last page already exists.</h2>
+  <ul class="big">
+    <li><strong>Is this change in scope?</strong> Check the Last Page.</li>
+    <li><strong>Is it done?</strong> Check the Last Page.</li>
+    <li><strong>Who decides?</strong> Check the Last Page.</li>
+  </ul>
+  <div class="callout"><span class="tag" style="color:#0f3460;">If you know PMI</span>These are the five process groups in library language: Initiating &rarr; <strong>Last Page</strong>; Planning &rarr; <strong>Table of Contents</strong>; Executing and Monitoring &amp; Controlling &rarr; <strong>Chapters</strong>; Closing &rarr; <strong>Epilogue</strong>. A few tools are borrowed from agile, lean, and PRINCE2 where they fit small teams better.</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Right-Size the Paperwork</div>
+  <h2>Pamphlet, Paperback, or Hardcover?</h2>
+  <div class="three-col">
+    <div class="card pink"><div class="big-num">0&ndash;3</div><h3>Pamphlet</h3><p>One page total. Email the sponsor for approval. <em>A new storytime series.</em></p></div>
+    <div class="card pink"><div class="big-num">4&ndash;7</div><h3>Paperback</h3><p>A one-page Last Page, deliverables with milestones, top-5 risks, monthly status, a written change rule, a closing checklist. <em>A Library of Things launch.</em></p></div>
+    <div class="card pink"><div class="big-num">8&ndash;10</div><h3>Hardcover</h3><p>The full book: charter, plan, WBS, risk register, communication plan, change log, quality checks, transition plan, audit-ready archive. <em>Construction Aid, an ILS migration.</em></p></div>
+  </div>
+  <div class="callout">Not every project needs the full book. <strong>Every edition keeps the same five steps.</strong> Only the amount of writing changes.</div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">FOLD</span><div class="eyebrow" style="margin:0;">Set Up</div></div>
+  <h2>Fold your paper into four panels</h2>
+  <div class="ex-box">
+    <p><strong>Label them:</strong></p>
+    <p style="font-size:clamp(1.4rem,3vw,2.6rem);"><strong>Last Page</strong> &nbsp;|&nbsp; <strong>Table of Contents</strong> &nbsp;|&nbsp; <strong>Chapters</strong> &nbsp;|&nbsp; <strong>Epilogue</strong></p>
+    <p>That paper <em>is</em> your project plan for the rest of the session. It's a fold, not a form.</p>
+    <p>(Use a standard 8.5 x 11 sheet. Fold it in half, then in half again. Write small, and use both sides of every panel. Project name goes at the top of the Last Page panel.)</p>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Worked Example &middot; Paperback</div>
+  <h2>Launch a Library of Things: the Last Page</h2>
+  <table class="t small">
+    <tr><td>Purpose</td><td>To give patrons a free way to borrow useful items (tools, cameras, telescopes, kitchen gear) they'd rather not buy, by June 15, 2027.</td></tr>
+    <tr><td>Success looks like</td><td>300 loans by Sept. 2027 &middot; 80% of surveyed borrowers say it saved them money or let them try something new &middot; collection open to every cardholder by June 15</td></tr>
+    <tr><td>Done means</td><td>120 items purchased, cataloged, and on the shelf &middot; 2 staff trained, lending and damage policy adopted by board &middot; launch event held &middot; grant report filed &middot; handed off to the Circulation Supervisor with an operating budget</td></tr>
+    <tr><td>Out of scope</td><td>3D printers and tool-repair classes (Later Edition) &middot; renovation &middot; delivery to homebound patrons</td></tr>
+    <tr><td>Sponsor / PM</td><td>Library Director / Circulation Supervisor</td></tr>
+    <tr><td>Yes / No / Also</td><td>Yes: Director (up to $2,500), Board (policy, anything larger) &middot; No: Director, Board &middot; Also: Friends, a trustee, a local hardware store</td></tr>
+    <tr><td>Edition</td><td>Paperback (score 6) &middot; <strong>Gate 1:</strong> Director Nov. 18; Board motion Dec. 10</td></tr>
+  </table>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Worked Example &middot; Table of Contents and Chapters</div>
+  <h2 style="margin-bottom:16px;">The same project, planned and staged</h2>
+  <style>.wk li{font-size:clamp(1rem,1.65vw,1.4rem);line-height:1.45;margin-bottom:0.55em}.wk h3{margin-bottom:12px}.wk.card{padding:22px 28px}</style>
+  <div class="two-col">
+    <div class="card wk">
+      <h3>Table of Contents</h3>
+      <ul>
+        <li><strong>Deliverables:</strong> items cataloged, shelving and signs, staff trained, policy adopted, launch event, grant report</li>
+        <li><strong>Estimates (PERT):</strong> purchasing 7 wks, shelving 6 wks, policy 5 wks</li>
+        <li><strong>Milestones:</strong> Dec 10 board approval, Feb 28 shelving ready, Apr 14 policy adopted, Jun 15 opening</li>
+        <li><strong>Budget:</strong> $13,500&ndash;$15,000 (grant) + ~160 staff hours</li>
+        <li><strong>Gives first:</strong> launch event size, then number of items; never the lending policy</li>
+      </ul>
+    </div>
+    <div class="card wk">
+      <h3>Chapters</h3>
+      <ul>
+        <li><strong>1.</strong> Plan and approve (Nov&ndash;Dec)</li>
+        <li><strong>2.</strong> Set up the space (Jan&ndash;Feb)</li>
+        <li><strong>3.</strong> Catalog and train (Mar&ndash;Apr)</li>
+        <li><strong>4.</strong> Launch (May&ndash;Jun)</li>
+        <li><strong>Board:</strong> To Do / Doing / Done, WIP (work in progress) limit 3</li>
+        <li><strong>Weekly check:</strong> Mondays, 15 minutes</li>
+        <li><strong>Change rule:</strong> in writing to the Director; Board decides over $500 or any grant-funded change</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SEGMENT 2 ===================== -->
+<div class="slide slide-section">
+  <div class="s-num">2</div>
+  <div class="s-eyebrow">Segment 2</div>
+  <h2>Write the Last Page</h2>
+  <p class="s-body">Turn the Anchor Project into a decision, before anyone commits time or money.</p>
+  <div class="s-step">METHOD STEP: LAST PAGE (INITIATING)</div>
+</div>
+
+<div class="slide slide-big">
+  <div class="eyebrow">Write the Ending First</div>
+  <p class="bigq">If you can't describe the ending, <em>you can't plan the middle.</em></p>
+  <p class="bigsub">Nobody's board cares that the ILS migrated. They care that patrons can find and request items without calling the desk.</p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Outcome vs. Output</div>
+  <h2>The output is the thing. The outcome is what changes for people.</h2>
+  <div class="two-col" style="margin-bottom:18px;">
+    <div class="card"><h3>Output: the thing you make</h3><p>A collection of 120 items on the shelf. You can count it and point at it.</p></div>
+    <div class="card pink"><h3>Outcome: how people feel or what happens</h3><p>Patrons save money and try new things. You see it in what they do and say.</p></div>
+  </div>
+  <ul class="big compact">
+    <li><strong>Purpose</strong> answers <em>Why now?</em> and <em>What will success look like?</em></li>
+    <li><strong>Success:</strong> a number, a date, or an observable change. Put the outcome first, then the output.</li>
+    <li><strong>Definition of Done:</strong> the conditions that must <em>all</em> be true to call it finished. (From Scrum. The same idea as PMI's acceptance criteria.)</li>
+    <li>Ask <strong>"so what?"</strong> after every deliverable until you reach a person who is better off.</li>
+  </ul>
+</div>
+
+<div class="slide slide-big">
+  <div class="eyebrow">The Authority Question</div>
+  <p class="bigq">Who can say <em>yes</em>?<br>Who can say <em>no</em>?<br>Who can say <em>"also"</em>?</p>
+  <p class="bigsub">The third person is where scope creep comes from. Name all three on your Last Page.</p>
+</div>
+
+<div class="slide dense">
+  <div class="eyebrow">Discussion</div>
+  <h2>Who is the "also" person in your organization?</h2>
+  <p class="lede" style="font-size:clamp(1rem,1.8vw,1.5rem);margin-bottom:10px;">Name roles, not people. Common answers: a trustee, a funder, the director, a vocal patron, the city.</p>
+  <table class="t small">
+    <tr><th>Library type</th><th>Sponsor is often...</th></tr>
+    <tr><td>Public</td><td>The board</td></tr>
+    <tr><td>Academic</td><td>The dean or Associate University Librarian (AUL)</td></tr>
+    <tr><td>School</td><td>The principal, and sometimes the district</td></tr>
+  </table>
+  <div class="callout pink"><span class="tag">Where public dollars are involved</span>The sponsor's approval must be on official record: minutes or email.</div>
+  <p class="lede" style="margin-top:10px;margin-bottom:0;font-size:clamp(1rem,1.8vw,1.5rem);">One authorized project manager. One sponsor who controls resources. <em>"Without that clarity, accountability dissolves."</em></p>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">SOLO &middot; QUIET</span><div class="eyebrow" style="margin:0;">Exercise A</div></div>
+  <h2>Draft your Last Page</h2>
+  <div class="ex-box compact">
+    <ol>
+      <li><strong>Purpose:</strong> <em>To [change] for [whom] by [when].</em></li>
+      <li><strong>Success looks like:</strong> 1-3 results (number, date, or something observable). Outcome first.</li>
+      <li><strong>Done means:</strong> 3-5 conditions, including "handed off to [owner]."</li>
+      <li><strong>Out of scope:</strong> at least two things you are <em>not</em> doing.</li>
+      <li><strong>Sponsor and PM:</strong> names, not committees.</li>
+      <li><strong>Who can say yes / no / "also"?</strong></li>
+    </ol>
+    <p style="font-size:0.85em;">One or two lines each. No full sentences needed. Write it as if the project is already finished.</p>
+  </div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">PAIRS</span><div class="eyebrow" style="margin:0;">Exercise B</div></div>
+  <h2>The Stranger Test</h2>
+  <div class="ex-box compact">
+    <ol>
+      <li><strong>Swap papers.</strong> The writer says nothing.</li>
+      <li>The reader reads the page once, then turns it over.</li>
+      <li>From memory, the reader answers:
+        <ul>
+          <li><em>What is this project trying to accomplish?</em></li>
+          <li><em>How will we know it's done?</em></li>
+          <li><em>Who is responsible for making it happen?</em></li>
+        </ul>
+      </li>
+      <li>The writer listens and takes notes. <strong>Switch.</strong> Then fix whatever your partner got wrong.</li>
+    </ol>
+    <p>If they got it wrong, the problem is the page, not the reader.</p>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Exercise C &middot; Size Your Project</div>
+  <h2>Score each factor 0, 1, or 2</h2>
+  <table class="t small">
+    <tr><th>Factor</th><th>0</th><th>1</th><th>2</th></tr>
+    <tr><td>Duration</td><td>Under 1 month</td><td>1-6 months</td><td>Over 6 months</td></tr>
+    <tr><td>People</td><td>Just me, or me plus one</td><td>3-6, all internal</td><td>7 or more, or any outside vendor or partner</td></tr>
+    <tr><td>Money</td><td>No new money</td><td>Within an existing budget line</td><td>New budget, grant, aid, or bond; over roughly $10,000</td></tr>
+    <tr><td>Visibility</td><td>Internal only</td><td>Board or campus leadership will ask</td><td>Public, press, funder, or audit exposure</td></tr>
+    <tr><td>Reversibility</td><td>Easy to undo</td><td>Awkward to undo</td><td>Hard or costly to undo (a building, contract, or migration)</td></tr>
+  </table>
+  <div class="callout"><strong>Add them up:</strong> 0-3 Pamphlet &nbsp;|&nbsp; 4-7 Paperback &nbsp;|&nbsp; 8-10 Hardcover. Write your edition in the corner of your Last Page panel.</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Scoring Examples &middot; The Rules of the Rule</div>
+  <h2>Size the paperwork to the risk, not the ambition.</h2>
+  <div class="two-col">
+    <div class="card"><h3>New storytime series</h3><p>Under a month to plan (0) &middot; me + one colleague (0) &middot; no new money (0) &middot; internal (0) &middot; easy to undo (0)</p><p style="margin-top:8px;"><strong>Score 0: Pamphlet</strong></p></div>
+    <div class="card"><h3>Construction Aid roof</h3><p>Eight months (2) &middot; contractor + architect (2) &middot; state aid (2) &middot; public and audited (2) &middot; can't un-build a roof (2)</p><p style="margin-top:8px;"><strong>Score 10: Hardcover</strong></p></div>
+  </div>
+  <ul class="big compact" style="margin-top:18px;">
+    <li><strong>Re-score at every gate.</strong> A vendor comes on or a grant is added? Move up an edition.</li>
+    <li><strong>Any public or grant money makes Visibility at least a 1</strong>, and approvals go on the record.</li>
+    <li><strong>No edition skips documentation.</strong> A Pamphlet's is small, not absent.</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Segment 2 &middot; Problems and Fixes</div>
+  <h2>Where a missing Last Page hurts</h2>
+  <div class="pf-head"><span>Problem</span><span>Fix</span></div>
+  <div class="pf-row"><div class="p"><strong>Vague goals</strong> ("improve," "enhance," "be more welcoming")</div><div class="f">Put a number, a date, or an observable change in the success line.</div></div>
+  <div class="pf-row"><div class="p"><strong>Started without approval,</strong> and the question surfaces at the worst moment.</div><div class="f">Gate 1. Sponsor approval on the record before you spend time or money.</div></div>
+  <div class="pf-row"><div class="p"><strong>"Done" keeps moving.</strong></div><div class="f">Write the Definition of Done first. It changes only through the change rule.</div></div>
+</div>
+
+<!-- ===================== SEGMENT 3 ===================== -->
+<div class="slide slide-section">
+  <div class="s-num">3</div>
+  <div class="s-eyebrow">Segment 3</div>
+  <h2>Table of Contents</h2>
+  <p class="s-body">Break the work into deliverables, pick the smallest version that works, and protect the scope.</p>
+  <div class="s-step">METHOD STEP: PLANNING (SCOPE AND WBS)</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Work Breakdown Structure</div>
+  <h2>List the chapters, not the to-dos.</h2>
+  <ul class="big">
+    <li>Start from the <strong>finished product</strong> and break it into parts. <em>"A WBS describes work, not people."</em></li>
+    <li><strong>Deliverables are nouns.</strong> Work is verb + noun. "Signage" &rarr; "Draft signage text," "Get director approval," "Print and install."</li>
+    <li><strong>Stop breaking down</strong> when a piece is small enough that one person could finish it in a week or two and you could estimate it. PMI calls that a <strong>work package</strong>.</li>
+    <li>It doesn't list who writes them, and it isn't a to-do list yet.</li>
+  </ul>
+</div>
+
+<div class="slide slide-big">
+  <div class="eyebrow">The First Edition</div>
+  <p class="bigq">Launch the <em>first edition.</em><br>Then plan the second.</p>
+  <p class="bigsub">Libraries tend to want to launch the perfect thing. Ask: what is the <strong>smallest version that still meets the Definition of Done</strong>? Everything else goes on the <strong>Later Editions</strong> list. (Lean's minimum viable product; the "Go" box on the Scope Evaluation Matrix.)</p>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">SOLO &middot; QUIET</span><div class="eyebrow" style="margin:0;">Exercise A</div></div>
+  <h2>Sticky-note WBS</h2>
+  <div class="ex-box">
+    <ol>
+      <li>For each <strong>Definition of Done</strong> condition, write the <strong>deliverable</strong> (a noun) on a sticky note.</li>
+      <li>Under each, add <strong>2-4 notes</strong> for the work (verb + noun).</li>
+      <li>When the notes are down, <strong>star the First Edition</strong>: the smallest set that still means "done."</li>
+      <li>Stick it all on your <strong>Table of Contents</strong> panel.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Know the Difference</div>
+  <h2>Four ways scope changes</h2>
+  <div class="two-col">
+    <div class="card pink"><h3>Scope creep</h3><p>Intentional additions to scope, usually from someone with influence.</p></div>
+    <div class="card pink"><h3>Scope drift</h3><p>Small, unrecorded changes that pile up until the project is a different size.</p></div>
+    <div class="card pink"><h3>Gold plating</h3><p>The team adds extras nobody asked for.</p></div>
+    <div class="card green"><h3>A missed requirement</h3><p>Not creep. The plan left out something required (accessibility, a code or licensing rule). It still goes through the change rule, but the answer is rarely "no."</p></div>
+  </div>
+  <p class="lede" style="margin-top:14px;">PMI's top causes of scope creep: ambiguous scope, no formal requirements process, inconsistent requirements collection, weak sponsorship, long project duration.</p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Scope Evaluation Matrix</div>
+  <h2>Importance vs. difficulty</h2>
+  <div class="matrix">
+    <div class="neg"><strong>Negotiate</strong>Important, but hard. Trade it against scope, schedule, or budget.</div>
+    <div class="go"><strong>Go</strong>Important and easy. Fits the First Edition.</div>
+    <div class="no"><strong>No-Go</strong>Not important, and hard. Decline, and write down why.</div>
+    <div class="neg2"><strong>Negotiate / Later Edition</strong>Easy but not important. Park it on the Later Editions list.</div>
+  </div>
+  <div class="callout">Top of the grid: <strong>more important</strong>. Right side: <strong>easier</strong>. For each request, ask: <em>Go, Negotiate, or No-Go? What kind of change is it? What do I say, and what do I write down?</em></div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">GROUP</span><div class="eyebrow" style="margin:0;">Curveball 1 of 4</div></div>
+  <h2>"Since you're already here..."</h2>
+  <div class="ex-box">
+    <p>A state-aid-funded <strong>roof replacement</strong> is under way. The trustee who chairs the building committee says:</p>
+    <p><em>"The crew is already on site and the lift is already rented. Can they also fix the skylight in the children's room? Same week, and it'll cost half what it would later."</em></p>
+    <p><strong>Go, Negotiate, or No-Go? What kind of change is it? What do you say, and what do you write down?</strong></p>
+  </div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">GROUP</span><div class="eyebrow" style="margin:0;">Curveball 2 of 4</div></div>
+  <h2>The generous offer</h2>
+  <div class="ex-box">
+    <p>The <strong>Friends group</strong> offers $8,000 for two 3D printers, on one condition: they're in the library by the spring book sale. The grant-funded plan doesn't include them.</p>
+    <p><strong>Go, Negotiate, or No-Go? What does "free" cost? Who can accept a restricted gift?</strong></p>
+  </div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">GROUP</span><div class="eyebrow" style="margin:0;">Curveball 3 of 4</div></div>
+  <h2>The helpful volunteer</h2>
+  <div class="ex-box">
+    <p>Your IT volunteer says: <em>"I built a patron room-reservation feature into the new website over the weekend. It works great."</em></p>
+    <p>Nobody asked for it. The library now has to maintain it, protect patron data, and make it accessible.</p>
+    <p><strong>What kind of change is this? What do you say to someone who's doing you a favor?</strong></p>
+  </div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">GROUP</span><div class="eyebrow" style="margin:0;">Curveball 4 of 4</div></div>
+  <h2>Three small asks</h2>
+  <div class="ex-box">
+    <p>In three emails over six weeks, the school district liaison asks:</p>
+    <ol>
+      <li>Can the survey be five questions instead of three?</li>
+      <li>Can it also go to the district parent list?</li>
+      <li>Can the results be broken out by grade?</li>
+    </ol>
+    <p>Each one "took just a few minutes." <strong>At what point did this become a change? Whose job is it to notice?</strong></p>
+  </div>
+</div>
+
+<div class="slide slide-big">
+  <div class="eyebrow">The Rule</div>
+  <p class="bigq">Every change is a <em>trade.</em><br>"Yes, and here's what it costs" is a complete answer.</p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow" style="color:#e94560;">The Most Important Slide in This Section</div>
+  <h2>Put it in writing.</h2>
+  <ul class="big">
+    <li>A hallway yes isn't a decision. <strong>It's an assumption.</strong></li>
+    <li>Every decision about scope, schedule, or money gets a written line: <strong>what, who, when, and the cost.</strong></li>
+    <li><strong>Everything involving money goes in the project file.</strong></li>
+    <li>Construction Aid projects (and most grant or public-money projects) can be <strong>audited</strong>. If it isn't in the file, it didn't happen, or it wasn't approved.</li>
+  </ul>
+  <div class="callout pink"><span class="tag">This method plans the project</span>It does <strong>not</strong> replace proper project documentation. Charter, change log, approvals, and invoices all belong in the project file.</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Capture on Your Table of Contents Panel</div>
+  <h2>What goes on the panel</h2>
+  <ul class="big">
+    <li><strong>3-7 deliverables</strong>, each tied to a Definition of Done condition</li>
+    <li><strong>2-4 pieces of work</strong> under each</li>
+    <li><strong>Stars</strong> on the First Edition</li>
+    <li>A <strong>Later Editions</strong> list: good ideas you're deliberately putting off</li>
+    <li>A <strong>change rule</strong>, in writing: <em>Changes go to ___ in writing, and ___ decides. Anything involving money is filed in the project record.</em></li>
+  </ul>
+  <p class="lede" style="margin-top:8px;">Templates in the book: WBS Template (Ch. 3), Scope Evaluation Matrix (Ch. 2).</p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Segment 3 &middot; Problems and Fixes</div>
+  <h2>Where scope goes sideways</h2>
+  <div class="pf-head"><span>Problem</span><span>Fix</span></div>
+  <div class="pf-row"><div class="p"><strong>Creep from trustees and funders.</strong></div><div class="f">A written change rule, and a Later Editions list so "not now" has somewhere to go.</div></div>
+  <div class="pf-row"><div class="p"><strong>Gold plating by enthusiastic staff.</strong></div><div class="f">Done means "meets the Definition of Done," not "as good as it could be."</div></div>
+</div>
+
+<!-- BREAK -->
+<div class="slide slide-section">
+  <div class="s-eyebrow">Pause</div>
+  <h2>Break</h2>
+  <p class="s-body">Optional: post your Table of Contents on the wall. Grab a marker and leave one helpful sticky note on someone else's: <em>"You might be missing..."</em></p>
+</div>
+
+<!-- ===================== SEGMENT 4 ===================== -->
+<div class="slide slide-section">
+  <div class="s-num">4</div>
+  <div class="s-eyebrow">Segment 4</div>
+  <h2>Time and Money</h2>
+  <p class="s-body">Turn the Table of Contents into a realistic schedule and budget range. See how scope, time, and money trade against each other.</p>
+  <div class="s-step">METHOD STEP: PLANNING (ESTIMATE)</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">The Triple Constraint</div>
+  <h2>Pull one corner and the others move.</h2>
+  <div class="three-col">
+    <div class="card"><h3>Scope</h3><p>What you're delivering.</p></div>
+    <div class="card"><h3>Schedule</h3><p>When it's delivered.</p></div>
+    <div class="card"><h3>Budget</h3><p>What it costs.</p></div>
+  </div>
+  <p class="lede" style="margin-top:14px;">With <strong>quality</strong> in the middle. If someone moves the deadline up, something else gives: scope shrinks, or you add money or people.</p>
+  <div class="callout pink"><span class="tag">"But my project doesn't cost money."</span>Everything costs money. If your project is staff time, <strong>the budget is hours</strong>. Forty hours of a librarian's time is real money even if it never shows up on an invoice. Count hours and put a dollar figure next to them (hours &times; loaded hourly rate).</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Quality vs. Grade</div>
+  <h2>Cutting grade is fine. Cutting quality isn't.</h2>
+  <ul class="big">
+    <li><strong>Quality:</strong> the deliverable does what you need it to (conformance to requirements, fitness for use).</li>
+    <li><strong>Grade:</strong> how much people value it, its features and finish.</li>
+    <li>A simpler version can still be <strong>high quality</strong>.</li>
+    <li>When money or time gets squeezed, <strong>protect the outcome</strong>.</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Estimating Methods</div>
+  <h2>Three ways to get to a number</h2>
+  <div class="three-col">
+    <div class="card"><h3>Analogous</h3><p>"Last time it cost..."</p><p style="margin-top:8px;"><strong>$3,000 for 1,000 photos</strong></p></div>
+    <div class="card"><h3>Parametric</h3><p>Cost per unit &times; units.</p><p style="margin-top:8px;"><strong>$3 per photo &times; 10,000</strong></p></div>
+    <div class="card"><h3>Bottom-up</h3><p>Add up the work packages.</p><p style="margin-top:8px;"><strong>Most accurate, most effort</strong></p></div>
+  </div>
+  <div class="callout">"Estimates aren't guesses. They're informed predictions with the assumptions written down."</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">PERT</div>
+  <h2>(Optimistic + 4 &times; Most Likely + Pessimistic) &divide; 6</h2>
+  <div class="two-col">
+    <div class="card"><h3>Worked example</h3><p>6 weeks best, 8 most likely, 12 worst:</p><p style="margin-top:8px;"><strong>(6 + 4&times;8 + 12) &divide; 6 = 8.33</strong></p><p>Plan for <strong>9 weeks</strong>.</p></div>
+    <div class="card"><h3>Rules</h3><ul><li>Works for <strong>time, cost, or hours</strong></li><li>Always <strong>round up</strong></li><li>Write down the <strong>basis</strong> and assumptions</li><li>Use on the 3 biggest or most uncertain work packages</li></ul></div>
+  </div>
+  <p class="lede" style="margin-top:14px;">Also: <strong>dependencies</strong> (what can't start until something else finishes) and <strong>milestones, not every task</strong>: "Identify the few milestones that will define progress."</p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Library Reality</div>
+  <h2>Check your calendar.</h2>
+  <ul class="big">
+    <li>Your biggest schedule risks are usually outside your control: <strong>board meeting dates, grant windows, application deadlines, the fiscal year, vendor lead times, summer</strong>.</li>
+    <li>Many projects need board approval at some point. <strong>Make each board meeting a milestone:</strong> what are you bringing, and what do you need decided?</li>
+    <li>Not a director? <strong>Same idea with your supervisor's meetings</strong>, one-on-ones, or your department head's calendar.</li>
+  </ul>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">SOLO</span><div class="eyebrow" style="margin:0;">Exercise A</div></div>
+  <h2>Estimate your three biggest pieces</h2>
+  <div class="ex-box compact">
+    <ol>
+      <li>Pick your <strong>3 biggest or most uncertain</strong> work packages.</li>
+      <li>Write <strong>Best / Likely / Worst</strong> for time (and cost, or hours).</li>
+      <li><strong>(Best + 4 &times; Likely + Worst) &divide; 6.</strong> Round up.</li>
+      <li>Circle what <strong>can't start</strong> until something else is done.</li>
+      <li>Draw a line across the bottom of your panel: <strong>3-5 milestones</strong> plus your <strong>board or supervisor meeting dates</strong>.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">GROUP</span><div class="eyebrow" style="margin:0;">Exercise B</div></div>
+  <h2>The Squeeze</h2>
+  <div class="ex-box">
+    <p>Something just got squeezed by <strong>20%</strong>: your <strong>budget</strong>, your <strong>hours</strong>, or your <strong>deadline</strong>. Talk it through as a group:</p>
+    <ol>
+      <li><strong>What gives: scope, schedule, or budget?</strong></li>
+      <li><em>What does that do to the outcome?</em></li>
+      <li><strong>Would you make the same trade</strong> on your own project?</li>
+    </ol>
+    <p><strong>Protect the outcome.</strong> Cut grade before quality. Tell the sponsor what you chose.</p>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Capture at the Bottom of Your Table of Contents Panel</div>
+  <h2>Time and money, in writing</h2>
+  <ul class="big compact">
+    <li>For the three biggest pieces: <strong>O / M / P and the PERT result</strong></li>
+    <li><strong>Estimate basis</strong> for each: analogous, parametric, or bottom-up</li>
+    <li><strong>3-5 milestones</strong> with target dates; board meetings and grant or fiscal deadlines marked</li>
+    <li>A <strong>budget range</strong> (dollars or hours) and the <strong>funding source</strong></li>
+    <li>Your <strong>trade-off order:</strong> <em>If something has to give, we give up (1) ___, then (2) ___. We never give up ___.</em></li>
+  </ul>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Segment 4 &middot; Problems and Fixes</div>
+  <h2>Where schedules and budgets break</h2>
+  <div class="pf-head"><span>Problem</span><span>Fix</span></div>
+  <div class="pf-row"><div class="p"><strong>Optimistic schedules.</strong></div><div class="f">Three-point estimates with the assumptions written next to them.</div></div>
+  <div class="pf-row"><div class="p"><strong>Budgets without a basis.</strong></div><div class="f">Name the method: analogous, parametric, or bottom-up.</div></div>
+  <div class="pf-row"><div class="p"><strong>Cutting the wrong thing when money gets tight.</strong></div><div class="f">Write the trade-off order before it happens.</div></div>
+</div>
+
+<!-- ===================== SEGMENT 5 ===================== -->
+<div class="slide slide-section">
+  <div class="s-num">5</div>
+  <div class="s-eyebrow">Segment 5</div>
+  <h2>People and Pre-Mortem</h2>
+  <p class="s-body">Decide who needs what information, and find the likely ways the project will fail while there's still time to prevent them.</p>
+  <div class="s-step">METHOD STEP: PLANNING (STAKEHOLDERS, RISK)</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Stakeholders</div>
+  <h2>Decide where to spend your communication time.</h2>
+  <div class="matrix">
+    <div class="neg"><strong>Keep Satisfied</strong>High power, low interest. <em>Municipal clerk, school business official.</em></div>
+    <div class="no"><strong>Manage Closely</strong>High power, high interest. <em>Board president, sponsor.</em></div>
+    <div class="go"><strong>Monitor</strong>Low power, low interest. Check in occasionally.</div>
+    <div class="neg2"><strong>Keep Informed</strong>Low power, high interest. <em>Patrons, staff.</em></div>
+  </div>
+  <div class="callout">Stakeholder management isn't about pleasing everyone. <em>"90% of a PM's time is communication."</em></div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">SOLO</span><div class="eyebrow" style="margin:0;">Exercise A</div></div>
+  <h2>Quick stakeholder map</h2>
+  <div class="ex-box">
+    <ol>
+      <li>On the <strong>back of your Last Page panel</strong>, draw a plus sign: <strong>Power</strong> (up) &times; <strong>Interest</strong> (across).</li>
+      <li>Place <strong>5-8 people or groups</strong> in the four boxes.</li>
+      <li>For everyone in <strong>Manage Closely</strong>: <em>how often will they hear from you, and how?</em></li>
+    </ol>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">The Pre-Mortem (Gary Klein, HBR 2007)</div>
+  <h2>"What could go wrong?" gets polite answers. "It failed. Why?" gets honest ones.</h2>
+  <ul class="big">
+    <li>Assume the project <strong>has already failed</strong> and explain why. Research on prospective hindsight finds it surfaces more risks than asking what might go wrong.</li>
+    <li><strong>Keep it grounded.</strong> Think ordinary failures: a person leaves, a vendor is late, a decision stalls, the money's not what you thought.</li>
+    <li>A pandemic, a market crash, an AI takeover? That's <strong>disaster planning</strong>, a different conversation. Nobody expects you to finish a project when something far outside average possibility happens.</li>
+  </ul>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">SOLO, THEN GROUP</span><div class="eyebrow" style="margin:0;">Exercise B</div></div>
+  <h2>Pre-mortem</h2>
+  <div class="ex-box compact">
+    <p><strong>It's a year from now. Your project failed. Not a disaster, but it clearly failed. Why?</strong></p>
+    <ol>
+      <li><strong>Write</strong> every reason you can think of, one per line (solo).</li>
+      <li><strong>Go around the room.</strong> One reason each, again and again, until the ideas run out. Every similar reason gets a <strong>star</strong>.</li>
+      <li>Read the pattern: <em>how many different projects, how many of the same failures?</em></li>
+      <li><strong>Solo:</strong> turn your top 3 into risks. <em>If ___ happens, then ___.</em> Response: <strong>Accept / Avoid / Transfer / Mitigate / Exploit.</strong> Put an <strong>owner's name</strong> next to each.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="slide slide-big">
+  <div class="eyebrow">What the Stars Tell Us</div>
+  <p class="bigq">Your project's details are unique.<br><em>Its failure modes aren't.</em></p>
+  <p class="bigsub">Sponsor lost interest or left &middot; key person left &middot; board added scope &middot; vendor was late &middot; nobody used the new thing &middot; the grant report was a scramble. Things do go sideways. But if most of your projects fail, <strong>the one constant is how you plan them.</strong> That's fixable, and someone has already solved most of these problems. <span style="color:#999;font-size:0.75em;">(Research on "uniqueness bias," Flyvbjerg et al., finds perceived uniqueness doesn't track actual uniqueness.)</span></p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Risk Responses</div>
+  <h2>Five ways to respond to a risk</h2>
+  <table class="t">
+    <tr><th>Response</th><th>Meaning</th><th>Library example</th></tr>
+    <tr><td>Accept</td><td>Know it, and do nothing yet</td><td>Weather may cancel the launch day</td></tr>
+    <tr><td>Avoid</td><td>Change the plan so the risk can't happen</td><td>Put the policy on the March agenda so April isn't the deadline</td></tr>
+    <tr><td>Transfer</td><td>Give the risk to someone better able to carry it</td><td>Contractor carries the warranty</td></tr>
+    <tr><td>Mitigate</td><td>Reduce the likelihood or impact</td><td>Cross-train a second staff member</td></tr>
+    <tr><td>Exploit</td><td>Make a positive risk more likely</td><td>A local business offers to sponsor supplies</td></tr>
+  </table>
+  <p class="lede" style="margin-top:12px;"><strong>Issue vs. risk:</strong> an issue has already happened; a risk might.</p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Capture on the Back of the Last Page Panel</div>
+  <h2>Who hears what, and what could go wrong</h2>
+  <ul class="big compact">
+    <li>The <strong>power/interest map</strong>, and for each Manage Closely stakeholder: <em>what they need to know, how often, and how</em></li>
+    <li><strong>Top 3 risks</strong> written as <em>If ___ happens, then ___</em>, each with a <strong>response</strong>, an <strong>owner</strong>, and an <strong>early warning sign</strong></li>
+    <li>One <strong>positive risk</strong>, if you found one</li>
+  </ul>
+  <div class="callout">Hardcovers need a full Risk Register and Communication Plan. Paperbacks: top-5 risks. Pamphlets: top 3 risks and one line on who hears what.</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Segment 5 &middot; Problems and Fixes</div>
+  <h2>Where people and risk catch you</h2>
+  <div class="pf-head"><span>Problem</span><span>Fix</span></div>
+  <div class="pf-row"><div class="p"><strong>The sponsor or key staff member disappears.</strong></div><div class="f">Name a backup sponsor, cross-train one person, put both on the risk list.</div></div>
+  <div class="pf-row"><div class="p"><strong>Surprised stakeholders.</strong></div><div class="f">The communication plan: who hears what, how often, before it's news.</div></div>
+  <div class="pf-row"><div class="p"><strong>Risk registers written once, never read.</strong></div><div class="f">Review the top three at every weekly check.</div></div>
+</div>
+
+<!-- ===================== SEGMENT 6 ===================== -->
+<div class="slide slide-section">
+  <div class="s-num">6</div>
+  <div class="s-eyebrow">Segment 6</div>
+  <h2>Write in Chapters</h2>
+  <p class="s-body">Run the work in stages, keep it visible, report status honestly, and handle change without micromanaging.</p>
+  <div class="s-step">METHOD STEP: EXECUTING, MONITORING AND CONTROLLING</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Manage by Stages (PRINCE2)</div>
+  <h2>Chapters of 2-8 weeks, each ending in a milestone.</h2>
+  <ul class="big">
+    <li><strong>Chapter gate:</strong> a checkpoint at the end of each chapter. The sponsor looks at what's finished, what it cost, and what's next, then decides: <strong>continue, adjust, or stop.</strong></li>
+    <li>Two habits carry most of the weight: <strong>a board everyone can see</strong> and <strong>a 15-minute weekly check</strong>.</li>
+    <li>Quality checks belong at <strong>each chapter gate</strong>, not only at the end.</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Visualize Work, Limit Work in Progress</div>
+  <h2>If you have seven projects in "Doing," you have seven projects in "Waiting."</h2>
+  <div class="three-col">
+    <div class="card"><h3>To Do</h3><p>Chapter work, ready to start.</p></div>
+    <div class="card pink"><h3>Doing</h3><p>No more than about <strong>3 cards per person</strong>. This is your <strong>WIP (work in progress) limit</strong>.</p></div>
+    <div class="card green"><h3>Done</h3><p>Finished and verified.</p></div>
+  </div>
+  <p class="lede" style="margin-top:14px;">The board can be a whiteboard, sticky notes, Trello, Planner, or a spreadsheet. The tool doesn't matter. <strong>Keeping it current does.</strong> Finish before you start.</p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">The Rhythm</div>
+  <h2>Weekly questions. Four-part reports.</h2>
+  <div class="two-col">
+    <div class="card"><h3>Weekly: three questions</h3><ol style="padding-left:1.1em;"><li>Are we where we expected to be?</li><li>Have we spent more or less than planned?</li><li>At this pace, will we finish on time and on budget?</li></ol></div>
+    <div class="card"><h3>Status report: four parts</h3><ol style="padding-left:1.1em;"><li><strong>Status:</strong> on track, at risk, or off track?</li><li><strong>Achievements:</strong> what got finished since the last report</li><li><strong>Issues and risks</strong></li><li><strong>Next steps and decisions needed</strong></li></ol></div>
+  </div>
+  <div class="callout">Boards need progress against <strong>milestones, budget, risks, and a decision</strong>. They don't need your task list.</div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Change and Oversight</div>
+  <h2>Monitoring without micromanaging.</h2>
+  <ul class="big">
+    <li><strong>Integrated change control:</strong> identify, evaluate, decide, implement, report. <strong>Log every request</strong> and every decision, in writing, and file it.</li>
+    <li>Micromanagement is what happens when a supervisor can't see progress. <strong>Make progress visible</strong> and nobody has to hover.</li>
+    <li><em>"Oversight should feel like support, not interference."</em> Watch the board and the milestones, not the people.</li>
+    <li><strong>Portfolio check:</strong> continue, pause, or conclude. <em>"Ending a project is not failure; it is stewardship."</em></li>
+  </ul>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">SOLO</span><div class="eyebrow" style="margin:0;">Exercise A</div></div>
+  <h2>Build your chapters and board</h2>
+  <div class="ex-box compact">
+    <ol>
+      <li>Group your work into <strong>2-4 chapters</strong>, each ending at one of your milestones.</li>
+      <li>Draw three columns: <strong>To Do | Doing | Done</strong>. Move Chapter 1 notes into To Do.</li>
+      <li>Write your <strong>WIP (work in progress) limit</strong> at the top: the most things <em>you</em> can have in Doing at once.</li>
+      <li><strong>Running several projects?</strong> List them in the corner. Mark each <strong>C</strong>ontinue, <strong>P</strong>ause, or <strong>E</strong>nd. You're allowed to use E.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Exercise B &middot; Part 1: pick one (or use a real one)</div>
+  <h2>Something just happened...</h2>
+  <div class="two-col">
+    <ul class="big tight">
+      <li>Your key volunteer or staff member just resigned.</li>
+      <li>The vendor quote came in 30% over budget.</li>
+      <li>The board president wants it done a month early for a ribbon-cutting.</li>
+      <li>The grant funder changed its reporting requirements.</li>
+      <li>A trustee is telling the community about a feature that's out of scope.</li>
+      <li>You're a month behind because of a building closure.</li>
+      <li>A second funder wants to add money, with conditions.</li>
+      <li>Your sponsor is going on a three-month leave.</li>
+    </ul>
+    <ul class="big tight">
+      <li>The municipality or district hasn't paid the invoice it promised.</li>
+      <li>Early users love it and want twice as much. (A positive risk.)</li>
+      <li>The one person who knows the old system retires in six weeks.</li>
+      <li>IT says the new software won't work on the current network.</li>
+      <li>The board approved the project, but the minutes don't mention the budget.</li>
+      <li>The contractor is asking for a change order.</li>
+      <li>A new director starts and wants to "take a fresh look" at the plan.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">PAIRS</span><div class="eyebrow" style="margin:0;">Exercise B &middot; Part 2</div></div>
+  <h2>Plot Twist and the Status Report</h2>
+  <div class="ex-box compact">
+    <p>Take the plot twist you picked and report it to "the board" the way a project manager would.</p>
+    <ol>
+      <li><strong>Sort it.</strong> An <strong>issue</strong> already happened (use your planned risk response). A <strong>change request</strong> is someone wanting something different (use your change rule).</li>
+      <li><strong>Write four lines</strong> on scrap paper, making up any details you need:
+        <ul>
+          <li><strong>Status:</strong> on track, at risk, or off track?</li>
+          <li><strong>Achievements:</strong> what has been finished so far</li>
+          <li><strong>Issues and risks:</strong> the plot twist, and your response</li>
+          <li><strong>Decision needed:</strong> what you need the board to decide</li>
+        </ul>
+      </li>
+      <li><strong>Turn to a neighbor.</strong> Read your four lines out loud. They play the board and ask one question. Then switch.</li>
+    </ol>
+  </div>
+</div>
+<div class="slide">
+  <div class="eyebrow">Capture on Your Chapters Panel</div>
+  <h2>What goes on the panel</h2>
+  <ul class="big compact">
+    <li><strong>2-4 chapters</strong>, each with an end milestone and a <strong>chapter gate</strong> (<em>Sponsor decides continue, adjust, or stop on ___</em>)</li>
+    <li><strong>Board:</strong> To Do / Doing / Done, with a WIP (work in progress) limit</li>
+    <li><strong>Weekly check:</strong> which day, how long, the three questions</li>
+    <li><strong>Status rhythm:</strong> who gets the four-part update and when (weekly for the team, monthly or per board meeting for the board)</li>
+    <li><strong>Change rule</strong> and where requests get logged</li>
+    <li>Optional: your <strong>portfolio</strong>, each project marked <strong>C</strong>ontinue, <strong>P</strong>ause, or <strong>E</strong>nd</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Segment 6 &middot; Problems and Fixes</div>
+  <h2>Where the middle falls apart</h2>
+  <div class="pf-head"><span>Problem</span><span>Fix</span></div>
+  <div class="pf-row"><div class="p"><strong>Projects stall in the middle.</strong></div><div class="f">Chapter gates give the middle a finish line.</div></div>
+  <div class="pf-row"><div class="p"><strong>Status reports hide bad news.</strong></div><div class="f">Four parts, in the same order every time, with decisions needed at the end.</div></div>
+  <div class="pf-row"><div class="p"><strong>Too many projects at once.</strong></div><div class="f">WIP (work in progress) limit and the Continue / Pause / End check.</div></div>
+  <div class="pf-row"><div class="p"><strong>Boards hear about problems too late.</strong></div><div class="f">Report against milestones at every meeting. Bring bad news with a recommendation.</div></div>
+</div>
+
+<!-- ===================== SEGMENT 7 ===================== -->
+<div class="slide slide-section">
+  <div class="s-num">7</div>
+  <div class="s-eyebrow">Segment 7</div>
+  <h2>The Epilogue</h2>
+  <p class="s-body">Make closing a deliberate step: verify, hand off, learn, thank people, and archive.</p>
+  <div class="s-step">METHOD STEP: CLOSING</div>
+</div>
+
+<div class="slide slide-big">
+  <div class="eyebrow">Transition to Operations</div>
+  <p class="bigq">Stewardship, <em>not possession.</em></p>
+  <p class="bigsub">Someone has to own it on Monday. If a new service has no owner after launch, it will slowly be forgotten. "Completion is not the same as closure."</p>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Closing Well</div>
+  <h2>Go back to your Last Page.</h2>
+  <ul class="big">
+    <li>Closing means <strong>checking every line of your Definition of Done</strong>. If you can't show it's done, it isn't done.</li>
+    <li><strong>Say thank you on the record.</strong> Recognition is part of accountability.</li>
+    <li><strong>Close the file.</strong> If it's grant or aid money, the project file is your audit defense.</li>
+    <li><em>"An unrecorded lesson is a mistake repeated."</em></li>
+  </ul>
+  <div class="callout">That "still not quite done" project from the start of the day? <strong>This is the fix.</strong></div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">SOLO</span><div class="eyebrow" style="margin:0;">Exercise A</div></div>
+  <h2>Write the closing announcement</h2>
+  <div class="ex-box compact">
+    <p>It's the day your project closes. Write the short announcement to your board, staff, or campus. <strong>It's the back-cover blurb of your book.</strong></p>
+    <ul>
+      <li><strong>What</strong> was delivered</li>
+      <li>The <strong>result</strong> against your success measures</li>
+      <li><strong>Who owns it</strong> now</li>
+      <li><strong>Who you're thanking</strong></li>
+      <li><strong>Where the records live</strong></li>
+    </ul>
+  </div>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">GROUP</span><div class="eyebrow" style="margin:0;">Exercise B</div></div>
+  <h2>Lessons learned: the ones you never wrote down</h2>
+  <div class="ex-box">
+    <p>Think of a project you've already rolled out, finished or not. Talk it through as a group:</p>
+    <ul>
+      <li>What did you learn during rollout that you would <strong>do again</strong>?</li>
+      <li>What did you learn that you would <strong>never do again</strong>?</li>
+      <li>Which of those lessons did you <strong>never write down</strong>?</li>
+    </ul>
+    <p>This room already holds a lessons-learned list nobody has written down. Your project's review should <strong>happen</strong>, and be <strong>written down</strong>.</p>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Capture on Your Epilogue Panel</div>
+  <h2>What goes on the panel</h2>
+  <ul class="big tight">
+    <li><strong>Closing checks:</strong> each Definition of Done condition, and how you'll show it's met</li>
+    <li><strong>New owner</strong> after handoff, and what they need (training, documentation, maintenance budget)</li>
+    <li><strong>Money:</strong> final invoices, grant or aid reporting, leftover funds (reallocate only with approval)</li>
+    <li><strong>Lessons:</strong> when you'll hold the review, and who's invited</li>
+    <li><strong>Thank-yous:</strong> who gets thanked, and how</li>
+    <li><strong>Archive:</strong> where the records live, e.g. <em>01_Charter, 02_Schedule and Budget, 03_Reports, 04_Meeting Notes and Approvals</em></li>
+    <li>The <strong>closing announcement</strong> draft</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Segment 7 &middot; Problems and Fixes</div>
+  <h2>Where projects fail to finish</h2>
+  <div class="pf-head"><span>Problem</span><span>Fix</span></div>
+  <div class="pf-row"><div class="p"><strong>Projects never formally end.</strong></div><div class="f">Check the Definition of Done line by line, then get written acceptance.</div></div>
+  <div class="pf-row"><div class="p"><strong>Grant closeouts assembled at the last minute.</strong></div><div class="f">Build the archive as you go: one folder per chapter.</div></div>
+  <div class="pf-row"><div class="p"><strong>Lessons nobody writes down.</strong></div><div class="f">Schedule the review before the project ends.</div></div>
+</div>
+
+<!-- ===================== REPLICATE ===================== -->
+<div class="slide slide-section">
+  <div class="s-eyebrow">Replicate It</div>
+  <h2>Make the method repeatable.</h2>
+  <p class="s-body">You just ran a project from start to finish: Shelf Check, Last Page, Table of Contents, Chapters, Epilogue.</p>
+</div>
+
+<div class="slide check">
+  <div class="eyebrow">Take-Home Checklist &middot; 1 of 2</div>
+  <h2>Last Page First: the method on one page</h2>
+  <div class="three-col">
+    <div class="card">
+      <h3>0. Shelf Check<br><em>Is this a project?</em></h3>
+      <ul><li>Can I say when it will be finished?</li><li>Can I say what success looks like?</li><li>What edition is it?</li></ul>
+    </div>
+    <div class="card">
+      <h3>1. Last Page<br><em>Write the ending first.</em></h3>
+      <ul><li>Why this, why now, for whom?</li><li>What 1-3 measurable results mean success?</li><li>What must be true to call it done?</li><li>What are we <em>not</em> doing?</li><li>Who sponsors, who runs, who says yes / no / "also"?</li></ul>
+      <p><strong>Gate 1:</strong> sponsor approved, on the record?</p>
+    </div>
+    <div class="card">
+      <h3>2. Table of Contents<br><em>Plan the chapters.</em></h3>
+      <ul><li>Deliverables and work? First Edition and Later Editions?</li><li>Biggest pieces in best / likely / worst (PERT)?</li><li>3-5 milestones vs. board, grant, fiscal dates?</li><li>Budget range, funding source, what gives first?</li><li>Who hears what, how often?</li><li>It failed: why?</li><li>How are changes requested and decided, <strong>in writing</strong>?</li></ul>
+      <p><strong>Gate 2:</strong> sponsor agreed to the plan as the baseline?</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide check">
+  <div class="eyebrow">Take-Home Checklist &middot; 2 of 2</div>
+  <h2>Chapters and Epilogue</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>3. Chapters<br><em>Write it one chapter at a time.</em></h3>
+      <ul><li>Board visible and current? Within my WIP limit?</li><li>Weekly: on schedule? On budget? On pace to finish?</li><li>Status: status, achievements, issues and risks, decisions needed</li><li>Issue (respond) or change (log it and decide)?</li></ul>
+      <p><strong>Chapter gates:</strong> continue, adjust, or stop? Re-score the edition.</p>
+    </div>
+    <div class="card">
+      <h3>4. Epilogue<br><em>Finish on purpose.</em></h3>
+      <ul><li>Every Definition of Done condition verified and accepted in writing?</li><li>Who owns it now, and what do they need?</li><li>Invoices, reports, and leftover funds settled?</li><li>What worked, what didn't, what would we change? (written)</li><li>Everyone thanked and released? Records archived? Announcement sent?</li></ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="eyebrow">Back to Where We Started</div>
+  <h2>Every confession has a fix.</h2>
+  <table class="t">
+    <tr><th>What you told us</th><th>The fix</th></tr>
+    <tr><td>"No end date."</td><td>The Last Page</td></tr>
+    <tr><td>"Somebody added something halfway through."</td><td>The change rule, in writing</td></tr>
+    <tr><td>"I found the real decision-maker too late."</td><td>Who can say yes, no, and "also"</td></tr>
+    <tr><td>"Still not quite done."</td><td>The Epilogue</td></tr>
+    <tr><td>"Too many projects."</td><td>The WIP (work in progress) limit and the Continue / Pause / End check</td></tr>
+    <tr><td>"No formal training."</td><td>You just ran the method once. Do it again.</td></tr>
+  </table>
+</div>
+
+<div class="slide slide-exercise">
+  <div class="ex-head"><span class="pill">SOLO</span><div class="eyebrow" style="margin:0;">Last Exercise</div></div>
+  <h2>Your next three actions in seven days</h2>
+  <div class="ex-box">
+    <ol>
+      <li>On the <strong>Epilogue panel</strong>, write the next three things you'll do on your Anchor Project in the next seven days.</li>
+      <li><strong>#1 is almost always:</strong> <em>get the Last Page approved by my sponsor, in writing.</em></li>
+      <li>Pick the one you'll do first, and decide when you'll do it.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="slide slide-big">
+  <div class="eyebrow">If You Remember Nothing Else</div>
+  <p class="bigq">What are we trying to <em>accomplish?</em><br>How will we know it's <em>done?</em><br>Who is <em>responsible?</em></p>
+  <p class="bigsub"><em>Intentional Outcomes</em>, Ch. 7</p>
+</div>
+
+<!-- CLOSE -->
+<div class="slide slide-close">
+  <h2>Thank you.<br>Now go write the last page.</h2>
+  <p>The method, the templates, and the full guide are free at Project Librarian: practical, and built for people doing this work for real.</p>
+  <div>
+    <a href="https://projectlibrarian.com" target="_blank">Visit Project Librarian</a>
+  </div>
+</div>
+
+</div>
+
+<div class="counter-bar">
+  <span class="counter" id="counter">1</span>
+</div>
+<div class="progress-bar">
+  <div class="progress-fill" id="progress" style="width: 1%"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let cur = 0;
+
+  function show(n) {
+    slides[cur].classList.remove('active');
+    cur = Math.max(0, Math.min(slides.length - 1, n));
+    slides[cur].classList.add('active');
+    slides[cur].scrollTop = 0;
+    const pct = Math.round(((cur + 1) / slides.length) * 100);
+    document.getElementById('counter').textContent = pct + '% complete';
+    document.getElementById('progress').style.width = pct + '%';
+    try { history.replaceState(null, '', '#' + (cur + 1)); } catch (e) {}
+  }
+  function move(dir) { show(cur + dir); }
+
+  document.querySelectorAll('.slide').forEach(slide => {
+    const prev = document.createElement('div');
+    prev.className = 'tap-prev';
+    prev.addEventListener('click', () => move(-1));
+    const next = document.createElement('div');
+    next.className = 'tap-next';
+    next.addEventListener('click', () => move(1));
+    slide.appendChild(prev);
+    slide.appendChild(next);
+  });
+
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); move(1); }
+    if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); move(-1); }
+    if (e.key === 'Home') { e.preventDefault(); show(0); }
+    if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+
+  const startAt = parseInt(location.hash.replace('#', ''), 10);
+  show(!isNaN(startAt) && startAt > 0 ? startAt - 1 : 0);
+</script>
+</body>
+</html>
